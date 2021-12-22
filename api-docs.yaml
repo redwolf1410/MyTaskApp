@@ -1,0 +1,221 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /tasks/{id}:
+    put:
+      tags:
+      - task-controller
+      summary: Update an entire task
+      operationId: updateTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+        required: true
+      responses:
+        "400":
+          description: The task with the given id doesn't exists
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Task'
+        "200":
+          description: Task updated
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Task'
+    delete:
+      tags:
+      - task-controller
+      summary: Delete one task
+      operationId: deleteTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: The task with the given id doesn't exists
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Task deleted
+          content:
+            '*/*':
+              schema:
+                type: string
+  /tasks/status/{id}:
+    put:
+      tags:
+      - task-controller
+      summary: Update the status of one task
+      operationId: updateStatusTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: status
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - PENDING
+          - IN_PROGRESS
+          - FINISHED
+      responses:
+        "400":
+          description: The task with the given id doesn't exists
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Task'
+        "200":
+          description: Task updated
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Task'
+  /tasks/description/{id}:
+    put:
+      tags:
+      - task-controller
+      summary: Update the decription of one task
+      operationId: updateDescriptionTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: description
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: The task with the given id doesn't exists
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Task'
+        "200":
+          description: Task updated
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Task'
+  /tasks:
+    get:
+      tags:
+      - task-controller
+      summary: Get all tasks
+      operationId: getTasks
+      responses:
+        "200":
+          description: Tasks found
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      tags:
+      - task-controller
+      summary: Create a task
+      operationId: createTasks
+      parameters:
+      - name: status
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - PENDING
+          - IN_PROGRESS
+          - FINISHED
+      - name: description
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Task created
+          content:
+            '*/*':
+              schema:
+                type: string
+        "422":
+          description: Task couldn't be created. It must contain a maximun of 255
+            characters
+          content:
+            '*/*':
+              schema:
+                type: string
+  /tasks/status/{status}:
+    get:
+      tags:
+      - task-controller
+      summary: Get task by its status
+      operationId: getTasksByStatus
+      parameters:
+      - name: status
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - PENDING
+          - IN_PROGRESS
+          - FINISHED
+      responses:
+        "200":
+          description: Tasks found
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - PENDING
+          - IN_PROGRESS
+          - FINISHED
+        description:
+          type: string
